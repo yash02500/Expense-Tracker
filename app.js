@@ -18,7 +18,7 @@ sequelize.sync()
  app.listen(3000, () => {
   console.log('server is running');
    app.get('/', (req, res, next) => {
-    res.sendFile(path.join(__dirname, "views", "index.html"));
+    res.sendFile(path.join(__dirname, "public", "signup.html"));
    })
   });
  })
