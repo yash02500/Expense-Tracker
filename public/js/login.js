@@ -9,6 +9,8 @@ async function login(event){
             email: userEmail,
             password: userPass
         });
+
+        alert("Login success");
         console.log("Login success");
        
         document.getElementById('uemail').value = '';

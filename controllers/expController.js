@@ -1,4 +1,6 @@
-const User = require('../models/signup');
+const { RelationshipType } = require('sequelize/lib/errors/database/foreign-key-constraint-error');
+const User = require('../models/user');
+const bcrypt = require('bcrypt');
 
 //User sign up 
 exports.addUser = async (req, res, next) => {
@@ -16,19 +18,20 @@ exports.addUser = async (req, res, next) => {
             return res.status(409).send('Email already exists');
         }
 
+        bcrypt.hash(password, 10, async (err, hash) => {
+        console.log(err);
         const newUser = await User.create({
             name: name,
             email: email,
-            password: password,
-        });
-
+            password: hash,
+        })
         console.log('User added');
-
         res.status(201).json(newUser)
+    })
+
     } catch (error) {
         console.log(error, JSON.stringify(error))
-
-        res.status(501).json({error})
+        res.status(500).json({error})
     }
 }
 
@@ -49,14 +52,19 @@ exports.login = async (req, res, next) => {
             return res.status(404).send('Email not found');
         }
 
-        const isValidPassword= user.password === password;
-        if(!isValidPassword){
-            console.log('Invalid password');
-            return res.status(401).send('Invalid password');
-        }
+        bcrypt.compare(password, user.password, (err, result)=>{
+            if(err){
+                throw new Error("Something went wrong");
+            }
+            
+            if(result){
+                res.status(200).json({ message: 'Login success', user: user });
+            }
 
-        console.log('Login success');
-        res.status(200).json({ message: 'Login success', user: user });
+            else{
+                return res.status(400).json('Incorrect password');
+            }
+        })
 
     } catch (error) {
         console.log(error, JSON.stringify(error))
