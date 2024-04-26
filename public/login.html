@@ -6,7 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Login</title>
     <link rel="stylesheet" href="/css/style.css">
-    <script src="/js/login.js"></script>
   </head>
   <body>
     <header>
@@ -20,12 +19,12 @@
         <div class="msg"></div>
         <div>
           <label for="email">Email:</label>
-          <input type="email" id="uemail" required>
+          <input type="email" id="lemail" required>
         </div>
         
         <div>
           <label for="password">Password:</label>
-          <input type="text" id="upass" required>
+          <input type="password" id="lpass" required>
         </div>
         
         <input class="btn" type="submit" value="Login" onclick="login(event)">
@@ -37,6 +36,6 @@
     </section>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
+    <script src="/js/login.js"></script>
   </body>
 </html> 

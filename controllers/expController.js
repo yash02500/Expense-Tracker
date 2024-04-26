@@ -1,6 +1,8 @@
-const { RelationshipType } = require('sequelize/lib/errors/database/foreign-key-constraint-error');
+// const { RelationshipType } = require('sequelize/lib/errors/database/foreign-key-constraint-error');
 const User = require('../models/user');
+const Expense = require('../models/expenses');
 const bcrypt = require('bcrypt');
+const path= require('path');
 
 //User sign up 
 exports.addUser = async (req, res, next) => {
@@ -33,7 +35,7 @@ exports.addUser = async (req, res, next) => {
         console.log(error, JSON.stringify(error))
         res.status(500).json({error})
     }
-}
+};
 
 
 //User login
@@ -58,16 +60,53 @@ exports.login = async (req, res, next) => {
             }
             
             if(result){
-                res.status(200).json({ message: 'Login success', user: user });
+                res.sendFile(path.join(__dirname, "..", "public", "addExpense.html"));
             }
 
             else{
-                return res.status(400).json('Incorrect password');
+                res.status(401).send('Incorrect password');
             }
-        })
+        });
 
     } catch (error) {
         console.log(error, JSON.stringify(error))
         res.status(501).json({error})
     }
-}
+};
+
+
+//add expenses
+exports.addExpense = async (req, res, next) => {
+    const {amount, description, category} = req.body;
+    console.log("Expense add request received", req.body);
+    if(!amount || !description || !category){
+        console.log('Expense data missing');
+        return res.sendStatus(400);
+    }
+
+    try{
+        const newExpense = await Expense.create({
+            amount: amount,
+            description: description,
+            category: category
+        });
+        console.log('Expense added');
+        res.status(201).json(newExpense);
+
+    }catch(error){
+        console.log(error, JSON.stringify(error));
+        res.status(500).json({error});
+    }
+};
+
+
+// Getting expenses
+exports.getExpense = async (req, res) => {
+    try {
+        const expenses= await Expense.findAll();
+        res.status(200).json({expenses: expenses});
+    }catch(error){
+        console.log(error);
+        res.status(500).json({error: error});
+    }
+};

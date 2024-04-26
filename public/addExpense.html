@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Expenses</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container mt-5">
+   <div class="row justify-content-center">
+    <div class="col-md-6">
+     <form id="expForm" class="p-4 bg-light rounded">
+      <h2 class="mb-4">Add Expenses</h2>
+
+       <div class="form-group">
+       <label for="amt">Choose amount:</label>
+      <input type="number" class="form-control" id="amt" required>
+    </div>
+   
+    <div class="form-group">
+      <label for="dec">Choose description:</label>
+      <input type="text" class="form-control" id="dec" required>
+    </div>
+
+    <div class="form-group">
+      <label for="choose">Choose category:</label>
+      <select class="form-control" id="choose" required>
+        <option value="Movie" class="categ">Movie</option>
+        <option value="Electricity" class="categ">Electricity</option>
+        <option value="Fuel" class="categ">Fuel</option>
+        <option value="Food" class="categ">Food</option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-dark">Add Expense</button>
+  </form>
+</div>
+  
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-7">
+      <h2 class="mb-4">Your Expenses</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Amount</th>
+            <th scope="col">Description</th>
+            <th scope="col">Category</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody id="expTable">
+          <!-- Expenses will be added -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="/js/expenses.js"></script>
+</body>
+</html> 
+
+
