@@ -12,6 +12,8 @@ async function addUser(event){
             email: userEmail,
             password: userPass
         });
+
+        window.location.href= "login.html";
         console.log("User added");
        
         document.getElementById('uname').value = '';

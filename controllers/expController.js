@@ -2,7 +2,7 @@
 const User = require('../models/user');
 const Expense = require('../models/expenses');
 const bcrypt = require('bcrypt');
-const path= require('path');
+const jwt= require('jsonwebtoken');
 
 //User sign up 
 exports.addUser = async (req, res, next) => {
@@ -37,6 +37,10 @@ exports.addUser = async (req, res, next) => {
     }
 };
 
+// Generating jwt token
+function generateToken(id){
+    return jwt.sign({userId: id}, '');
+}
 
 //User login
 exports.login = async (req, res, next) => {
@@ -60,7 +64,7 @@ exports.login = async (req, res, next) => {
             }
             
             if(result){
-                res.sendFile(path.join(__dirname, "..", "public", "addExpense.html"));
+                res.status(200).json({message:"Login successful", token: generateToken(user.id)}); 
             }
 
             else{
@@ -88,10 +92,11 @@ exports.addExpense = async (req, res, next) => {
         const newExpense = await Expense.create({
             amount: amount,
             description: description,
-            category: category
+            category: category,
+            UserId: req.user.id
         });
         console.log('Expense added');
-        res.status(201).json(newExpense);
+        return res.status(201).json({newExpense});
 
     }catch(error){
         console.log(error, JSON.stringify(error));
@@ -103,10 +108,28 @@ exports.addExpense = async (req, res, next) => {
 // Getting expenses
 exports.getExpense = async (req, res) => {
     try {
-        const expenses= await Expense.findAll();
-        res.status(200).json({expenses: expenses});
+        const expenses= await Expense.findAll({where: {UserId: req.user.id}});
+         return res.status(200).json({expenses: expenses});
     }catch(error){
         console.log(error);
         res.status(500).json({error: error});
     }
 };
+
+
+// Deleting expense
+exports.deleteExpenses = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        await Expense.destroy({where: {id: id, userId: req.user.id}})
+        .then((rows)=>{
+            if(rows === 0){
+                return res.status(404).json({message: "Expense not found"});
+            }
+            return res.status(200).json({message: "Expense deleted"});
+        });
+    } catch (err) {
+        console.log(err);
+    }
+}
+

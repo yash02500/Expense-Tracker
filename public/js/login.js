@@ -5,24 +5,22 @@ async function login(event){
         const userEmail = document.getElementById('lemail').value;
         const userPass = document.getElementById('lpass').value;
 
-        if (!userEmail || !userPass) {
-            document.querySelector('.msg').innerHTML = "Email and password are required";
-            return; 
-          }
-
         await axios.post('http://localhost:3000/expense/login', {
             email: userEmail,
             password: userPass
+        }).then(res=>{
+            alert(res.data.message);
+            console.log("Login success");
+            window.location.href="addExpense.html";
+            localStorage.setItem('token', res.data.token);
         });
 
-        alert("Login success");
-        console.log("Login success");
-       
         document.getElementById('lemail').value = '';
         document.getElementById('lpass').value = '';
 
     } catch(error){
-        document.body.innerHTML=document.body.innerHTML+'<h4>Something Went Wrong</h4>';
+        alert("Wrong email or password");
+        document.body.innerHTML=document.body.innerHTML+'<center><h4>Something Went Wrong</h4></center>';
         console.log(error);
     }
 }

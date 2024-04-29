@@ -1,4 +1,4 @@
-
+const token =localStorage.getItem('token');
 document.addEventListener('DOMContentLoaded', function () {
   showData();
 
@@ -13,11 +13,12 @@ expForm.addEventListener('submit', async function(event) {
     const expenseData={
         amount: amount,
         description: description,
-        category: category
+        category: category,
     };
 
     try{
-        await axios.post('http://localhost:3000/expense/addingExpense', expenseData);
+        await axios.post('http://localhost:3000/expense/addingExpense', expenseData, {headers: {'Authorization': token }});
+        showData();
     }catch(error){
         console.log(error);
     }
@@ -32,7 +33,7 @@ expForm.addEventListener('submit', async function(event) {
 
 // Fetch expenses
 function getExpenses(){
-    return axios.get('http://localhost:3000/expense/getExpenses')
+    return axios.get('http://localhost:3000/expense/getExpenses', {headers: {'Authorization': token }})
     .then(response=>{
         return response.data.expenses;
     }).catch(error=>{
@@ -67,3 +68,18 @@ function showData(){
     });
 }
 
+
+// Deleting expense
+document.getElementById("expTable").addEventListener("click", function (event) {
+  if (event.target.classList.contains("delete-btn")) {
+      const row = event.target.closest("tr");
+      const expenseId = row.dataset.id; 
+      axios.delete(`http://localhost:3000/expense/deleteExpense/${expenseId}`, {headers: {'Authorization': token}})
+          .then(() => {
+              row.remove();
+          })
+          .catch(err => {
+              console.error(err);
+          });
+  }
+});
