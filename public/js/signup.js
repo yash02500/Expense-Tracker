@@ -7,7 +7,7 @@ async function addUser(event){
         const userEmail = document.getElementById('uemail').value;
         const userPass = document.getElementById('upass').value;
 
-        await axios.post('http://localhost:3000/expense', {
+        await axios.post('http://localhost:3000/user/signup', {
             name: userName,
             email: userEmail,
             password: userPass

@@ -5,14 +5,14 @@ async function login(event){
         const userEmail = document.getElementById('lemail').value;
         const userPass = document.getElementById('lpass').value;
 
-        await axios.post('http://localhost:3000/expense/login', {
+        await axios.post('http://localhost:3000/user/login', {
             email: userEmail,
             password: userPass
         }).then(res=>{
             alert(res.data.message);
             console.log("Login success");
-            window.location.href="addExpense.html";
             localStorage.setItem('token', res.data.token);
+            window.location.href="addExpense.html";
         });
 
         document.getElementById('lemail').value = '';

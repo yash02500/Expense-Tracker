@@ -12,6 +12,10 @@
    <div class="row justify-content-center">
     <div class="col-md-6">
      <form id="expForm" class="p-4 bg-light rounded">
+     
+      <button type="button" id="premium" class="btn btn-success">Buy Premium</button> 
+      <div id="message"></div>
+      
       <h2 class="mb-4">Add Expenses</h2>
 
        <div class="form-group">
@@ -59,6 +63,7 @@
   </div>
 </div>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="/js/expenses.js"></script>
 </body>

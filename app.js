@@ -1,21 +1,34 @@
+const dotenv = require('dotenv');
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 
-const app = express();
 const expenseRoute = require('./routes/expenseRoutes');
+const userRoute = require('./routes/userRoutes');
+const premiumRoute = require('./routes/premiumRoutes');
+
 const sequelize = require('./util/database');
+
 const Expenses = require('./models/expenses');
 const User = require('./models/user');
+const Order = require('./models/orders');
+
+dotenv.config();
+const app = express();
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
 app.use('/expense', expenseRoute);
+app.use('/user', userRoute);
+app.use('/premium', premiumRoute);
 
 User.hasMany(Expenses);
 Expenses.belongsTo(User);
+
+User.hasMany(Order);
+Order.belongsTo(User);
 
 sequelize.sync()
 .then(() => {
