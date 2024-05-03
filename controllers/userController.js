@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt= require('jsonwebtoken');
 
 //User sign up 
-exports.addUser = async (req, res, next) => {
+const addUser = async (req, res, next) => {
     const { name, email, password } = req.body;
     console.log("Request received", req.body);
     if(!name || !email || !password){
@@ -37,12 +37,12 @@ exports.addUser = async (req, res, next) => {
 
 
 // Generating jwt token
-function generateToken(id, isPremiumuser){
+const generateToken = (id, isPremiumuser) =>{
     return jwt.sign({userId: id, isPremiumuser}, '7yv3ydbn324320rdnewod39dn4urybfece');
-}
+};
 
 //User login
-exports.login = async (req, res, next) => {
+const login = async (req, res, next) => {
     const { email, password } = req.body;
     console.log("Login Request received", req.body);
     if(!email || !password){
@@ -76,3 +76,11 @@ exports.login = async (req, res, next) => {
         res.status(501).json({error})
     }
 };
+
+module.exports = {
+    addUser,
+    login,    
+    generateToken
+};
+
+

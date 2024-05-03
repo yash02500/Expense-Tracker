@@ -4,13 +4,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
 showData();
 
-// const decode= parseJwt(token);
-// console.log(decode);
-// const isPremium =decode.isPremium;
+const decode= parseJwt(token);
+console.log(decode);
+const isPremiumuser =decode.isPremiumuser;
 
-// if(isPremium){
-//  premiumUser();  
-// }
+if(isPremiumuser){
+ premiumUser();  
+}
 
 const expForm= document.getElementById('expForm');
 expForm.addEventListener('submit', async function(event) {
@@ -50,6 +50,18 @@ function getExpenses(){
         console.log(error);
     });
 };
+
+
+// parse jwt
+function parseJwt (token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
+}
 
 
 // display expenses on the page
@@ -107,9 +119,9 @@ document.getElementById('premium').onclick = async function(e){
     const response = await axios.get('http://localhost:3000/premium/premiumMembership', {headers: {'Authorization': token }});
     console.log(response);
 
-    let options = {
+    var options = {
         "key": response.data.key_id,
-        "order_id": response.data.order_id,
+        "order_id": response.data.order.id,
         "handler": async function(response){
             await axios.post('http://localhost:3000/premium/updateTransactionStatus', {
             order_id: options.order_id,
@@ -118,7 +130,7 @@ document.getElementById('premium').onclick = async function(e){
 
         alert('You are now a premium member');
         premiumUser();
-        // localStorage.setItem('token', res.data.token)
+        localStorage.setItem('token', res.data.token)
     },
   };
 
