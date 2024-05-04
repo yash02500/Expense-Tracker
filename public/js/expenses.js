@@ -9,7 +9,8 @@ console.log(decode);
 const isPremiumuser =decode.isPremiumuser;
 
 if(isPremiumuser){
- premiumUser();  
+ premiumUser();
+ showLeaderboard();  
 }
 
 const expForm= document.getElementById('expForm');
@@ -95,6 +96,26 @@ function showData(){
 function premiumUser(){
     document.getElementById('premium').style.display = 'none';
     document.getElementById('message').innerHTML = 'Congratulations! You are now a premium member';
+}
+
+
+// Leaderboard
+function showLeaderboard(){
+    const inputElement = document.createElement("input")
+    inputElement.type = "button"
+    inputElement.value = 'Leaderboard'
+    inputElement.onclick = async() => {
+        const leaderboardData = await axios.get('http://localhost:3000/premiumFeature/leaderboard', { headers: {"Authorization" : token} })
+        console.log(leaderboardData)
+
+        let leaderboardList = document.getElementById('leaderboard')
+        leaderboardList.innerHTML += '<h1> Leader Board </<h1>'
+        leaderboardData.data.forEach((userDetails) => {
+            leaderboardList.innerHTML += `<li>Name - ${userDetails.name} Total Expense - ${userDetails.total_cost || 0} </li>`
+        })
+    }
+    document.getElementById("message").appendChild(inputElement);
+
 }
 
 

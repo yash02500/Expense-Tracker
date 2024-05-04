@@ -6,6 +6,7 @@ const path = require('path');
 const expenseRoute = require('./routes/expenseRoutes');
 const userRoute = require('./routes/userRoutes');
 const premiumRoute = require('./routes/premiumRoutes');
+const premiumFeatures = require('./routes/premiumFeaturesRoutes');
 
 const sequelize = require('./util/database');
 
@@ -23,6 +24,7 @@ app.use(express.static('public'));
 app.use('/expense', expenseRoute);
 app.use('/user', userRoute);
 app.use('/premium', premiumRoute);
+app.use('/premiumFeature', premiumFeatures);
 
 User.hasMany(Expenses);
 Expenses.belongsTo(User);
