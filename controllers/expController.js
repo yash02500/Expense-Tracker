@@ -16,6 +16,7 @@ exports.addExpense = async (req, res, next) => {
             category: category,
             UserId: req.user.id
         });
+        
         console.log('Expense added');
         return res.status(201).json({newExpense});
 

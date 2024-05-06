@@ -103,15 +103,16 @@ function premiumUser(){
 function showLeaderboard(){
     const inputElement = document.createElement("input")
     inputElement.type = "button"
-    inputElement.value = 'Leaderboard'
+    inputElement.className = "btn btn-outline-success"
+    inputElement.value = 'Show Leaderboard'
     inputElement.onclick = async() => {
         const leaderboardData = await axios.get('http://localhost:3000/premiumFeature/leaderboard', { headers: {"Authorization" : token} })
         console.log(leaderboardData)
 
         let leaderboardList = document.getElementById('leaderboard')
-        leaderboardList.innerHTML += '<h1> Leader Board </<h1>'
+        leaderboardList.innerHTML += '<h2> Leaderboard </<h2>'
         leaderboardData.data.forEach((userDetails) => {
-            leaderboardList.innerHTML += `<li>Name - ${userDetails.name} Total Expense - ${userDetails.total_cost || 0} </li>`
+            leaderboardList.innerHTML += `<li class="list-group-item">Name - ${userDetails.name} Total Expense - ${userDetails.total_cost || 0} </li>`
         })
     }
     document.getElementById("message").appendChild(inputElement);
