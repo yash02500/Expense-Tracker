@@ -27,7 +27,7 @@ exports.addExpense = async (req, res, next) => {
 };
 
 
-// Getting expenses
+// Getting expenses from database
 exports.getExpense = async (req, res) => {
     try {
         const expenses= await Expense.findAll({where: {UserId: req.user.id}});
