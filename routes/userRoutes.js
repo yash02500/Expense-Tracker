@@ -4,5 +4,6 @@ const userControll = require('../controllers/userController');
 
 routes.post('/signup', userControll.addUser);
 routes.post('/login', userControll.login);
+routes.post('/password/forgotpassword', userControll.forgotPassword);
 
 module.exports = routes;

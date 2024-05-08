@@ -1,6 +1,9 @@
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const jwt= require('jsonwebtoken');
+const Sib = require('sib-api-v3-sdk');
+const dotenv = require('dotenv');
+dotenv.config();
 
 //User sign up 
 const addUser = async (req, res, next) => {
@@ -77,10 +80,60 @@ const login = async (req, res, next) => {
     }
 };
 
+
+// Forgot password
+const forgotPassword = async (req, res, next) => {
+    const client = Sib.ApiClient.instance;
+
+// Authentication with the API key
+    const apiKey = client.authentications['api-key'];
+    apiKey.apiKey = process.env.API_KEY;
+    const tranEmailApi = new Sib.TransactionalEmailsApi();
+
+    const userMail = req.body.email;
+    console.log("Login Request received", req.body);
+    if(!userMail){
+        console.log('Email missing');
+        return res.sendStatus(400);
+    }
+
+    try{
+        const user = await User.findOne({ where: { email: userMail }});
+        if (!user) {
+            console.log('User not found');
+            return res.status(404).send('User not found');
+        }
+
+        const sender = {
+        email: 'yashv0482@gmail.com'
+    };
+
+        const receivers = [
+        {
+            email: userMail,
+        },
+    ];
+
+        const response = await tranEmailApi.sendTransacEmail({
+            sender,
+            to: receivers,
+            subject: 'Forgot Password',
+            textContent: 'Here is your link to reset your password',
+        });
+        console.log(response);
+        res.status(200).json({message: 'password reset link sent to your email', response});
+    
+    }catch (error) {
+        console.error(error);
+    }
+};
+
+
 module.exports = {
     addUser,
     login,    
-    generateToken
+    generateToken,
+    forgotPassword
 };
 
 
