@@ -1,7 +1,10 @@
 const User = require('../models/user');
+const ForgotPassword = require('../models/forgotPasswordRequest');
 const bcrypt = require('bcrypt');
 const jwt= require('jsonwebtoken');
 const Sib = require('sib-api-v3-sdk');
+const { v4: uuidv4 } = require('uuid');
+
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -90,8 +93,9 @@ const forgotPassword = async (req, res, next) => {
     apiKey.apiKey = process.env.API_KEY;
     const tranEmailApi = new Sib.TransactionalEmailsApi();
 
+    const uuid = uuidv4();
+
     const userMail = req.body.email;
-    console.log("Login Request received", req.body);
     if(!userMail){
         console.log('Email missing');
         return res.sendStatus(400);
@@ -103,6 +107,12 @@ const forgotPassword = async (req, res, next) => {
             console.log('User not found');
             return res.status(404).send('User not found');
         }
+
+        const storeForgotRequest = await ForgotPassword.create({
+            id: uuid,
+            UserId: user.id,
+        });
+
 
         const sender = {
         email: 'yashv0482@gmail.com'
@@ -118,9 +128,19 @@ const forgotPassword = async (req, res, next) => {
             sender,
             to: receivers,
             subject: 'Forgot Password',
-            textContent: 'Here is your link to reset your password',
+            htmlContent: `<p>Here is your link to reset your password <a href ="http:/localhost:3000/user/password/forgotpassword/${storeForgotRequest.id}"></a></p>`
         });
         console.log(response);
+        const active = await forgotPassword.findOne({where: {UserId: user.id}});
+        
+        if(response){
+            await active.update({isActive: true});
+        }
+
+        // else{
+        //     await active.update({isActive: false});
+        // }
+
         res.status(200).json({message: 'password reset link sent to your email', response});
     
     }catch (error) {
@@ -129,11 +149,25 @@ const forgotPassword = async (req, res, next) => {
 };
 
 
+// Forgot password user
+const forgotPasswordUser = async(req, res, next)=>{
+    const id = req.params.id;
+    const checkId = await forgotPassword.findOne({where: {id: id}});
+    
+    if(checkId){
+        res.status(200).json({messsage: "validLink"});
+    }
+
+}
+
+
 module.exports = {
     addUser,
     login,    
     generateToken,
-    forgotPassword
+    forgotPassword,
+    forgotPasswordUser
 };
+
 
 

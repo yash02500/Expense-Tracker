@@ -38,7 +38,6 @@ async function forgot(event){
         }).then(res=>{
             alert(res.data.message);
             console.log("email submitted");
-            // localStorage.setItem('token', res.data.token);
             window.location.href="login.html";
         });
 
