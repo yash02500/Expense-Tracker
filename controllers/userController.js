@@ -2,7 +2,8 @@ const User = require('../models/user');
 const ForgotPassword = require('../models/forgotPasswordRequest');
 const bcrypt = require('bcrypt');
 const jwt= require('jsonwebtoken');
-const Sib = require('sib-api-v3-sdk');
+const path = require('path');
+const nodemailer = require('nodemailer');
 const { v4: uuidv4 } = require('uuid');
 
 const dotenv = require('dotenv');
@@ -14,7 +15,7 @@ const addUser = async (req, res, next) => {
     console.log("Request received", req.body);
     if(!name || !email || !password){
         console.log('Values missing');
-        return res.sendStatus(500);
+        return res.sendStatus(400);
     }
 
     try{
@@ -85,89 +86,122 @@ const login = async (req, res, next) => {
 
 
 // Forgot password
-const forgotPassword = async (req, res, next) => {
-    const client = Sib.ApiClient.instance;
-
-// Authentication with the API key
-    const apiKey = client.authentications['api-key'];
-    apiKey.apiKey = process.env.API_KEY;
-    const tranEmailApi = new Sib.TransactionalEmailsApi();
-
+const sendResetLink = async (req, res, next) => {
     const uuid = uuidv4();
-
     const userMail = req.body.email;
-    if(!userMail){
+    if (!userMail) {
         console.log('Email missing');
         return res.sendStatus(400);
     }
 
+    try {
+        const user = await User.findOne({ where: { email: userMail } });
+        if (!user) {
+            console.log('User not found');
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const storeForgotRequest = await ForgotPassword.create({
+            uuid: uuid,
+            UserId: user.id,
+        });
+
+        // Transporter configuration
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            port: 465,
+            secure: true, // Use `true` for port 465, `false` for all other ports
+            auth: {
+                user: 'tech1organisation@gmail.com', // Use environment variables
+                pass: 'iial geqy qohs bqih',
+            },
+        });
+
+        // send mail with defined transport object
+        const info = await transporter.sendMail({
+            from: '"Yash" <tech1organisation@gmail.com>', // sender address
+            to: userMail, // list of receivers
+            subject: "Forgot Password", // Subject line
+            html: `<p>Here is your link to reset your password <a href ="http://localhost:3000/user/password/forgotpassword/${storeForgotRequest.uuid}">Reset password</a></p>`, // html body
+        });
+
+        
+        console.log("Password reset email sent: %s", info.messageId);
+        res.status(200).json({ message: 'Password reset link sent to your email', info });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error });
+    }
+}
+
+
+// Check Forgot password request by uuid link
+
+const checkForgotRequest = async(req, res, next)=>{
     try{
-        const user = await User.findOne({ where: { email: userMail }});
+
+    const id = req.params.id;
+    const checkId = await ForgotPassword.findOne({where: {uuid: id}});
+    
+    if(checkId){
+        res.sendFile(path.join(__dirname, '..', "public", "updatePass.html"));   
+    }
+    }catch (error) {
+        console.error(error);
+        res.status(500).json({error})
+    }
+}
+
+
+//Update password
+const updateForgotPassword = async (req, res, next) => {
+    const password = req.body.password;
+    const id = req.params.id;
+    console.log("Request received", req.body);
+    if(!password){
+        console.log('password missing ');
+        return res.sendStatus(400);
+    }
+
+    try{
+        const forgotPasswordRequest = await ForgotPassword.findOne({ where: { uuid: id } });
+            if (!forgotPasswordRequest) {
+            console.log('Invalid or expired link');
+            return res.status(404).send('Invalid or expired link');
+        }
+
+
+        const user = await User.findOne({ where: { id: forgotPasswordRequest.UserId } });
         if (!user) {
             console.log('User not found');
             return res.status(404).send('User not found');
         }
 
-        const storeForgotRequest = await ForgotPassword.create({
-            id: uuid,
-            UserId: user.id,
-        });
-
-
-        const sender = {
-        email: 'yashv0482@gmail.com'
-    };
-
-        const receivers = [
-        {
-            email: userMail,
-        },
-    ];
-
-        const response = await tranEmailApi.sendTransacEmail({
-            sender,
-            to: receivers,
-            subject: 'Forgot Password',
-            htmlContent: `<p>Here is your link to reset your password <a href ="http:/localhost:3000/user/password/forgotpassword/${storeForgotRequest.id}"></a></p>`
-        });
-        console.log(response);
-        const active = await forgotPassword.findOne({where: {UserId: user.id}});
-        
-        if(response){
-            await active.update({isActive: true});
+        bcrypt.hash(password, 10, async (err, hash) => {
+        if(err){
+            console.log(err);
+            return res.status(500).json({error: 'Error with hashing password'});
         }
 
-        // else{
-        //     await active.update({isActive: false});
-        // }
-
-        res.status(200).json({message: 'password reset link sent to your email', response});
+        await user.update({ password: hash });
+        console.log('Password updated');
+         res.status(200).json({ message: 'Password Updated',});
+    });
     
-    }catch (error) {
-        console.error(error);
+    } catch (error) {
+        console.log(error, JSON.stringify(error))
+        res.status(500).json({error})
     }
 };
-
-
-// Forgot password user
-const forgotPasswordUser = async(req, res, next)=>{
-    const id = req.params.id;
-    const checkId = await forgotPassword.findOne({where: {id: id}});
-    
-    if(checkId){
-        res.status(200).json({messsage: "validLink"});
-    }
-
-}
 
 
 module.exports = {
     addUser,
     login,    
     generateToken,
-    forgotPassword,
-    forgotPasswordUser
+    sendResetLink,
+    checkForgotRequest,
+    updateForgotPassword
 };
-
-
 

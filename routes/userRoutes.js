@@ -4,7 +4,8 @@ const userControll = require('../controllers/userController');
 
 routes.post('/signup', userControll.addUser);
 routes.post('/login', userControll.login);
-routes.post('/password/forgotpassword', userControll.forgotPassword);
-routes.post('/password/forgotpassword/:id', userControll.forgotPasswordUser);
+routes.post('/password/sendResetLink', userControll.sendResetLink);
+routes.get('/password/forgotpassword/:id', userControll.checkForgotRequest);
+routes.post('/password/forgotpassword/update/:id', userControll.updateForgotPassword);
 
 module.exports = routes;

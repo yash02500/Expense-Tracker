@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Reset password link</title>
+    <title>Update password</title>
     <link rel="stylesheet" href="/css/style.css">
   </head>
 
@@ -14,14 +14,19 @@
 
     <section class="container">
       <form id="my-form">
-        <h2>Enter email</h2>
+        <h2>Enter new password</h2>
         <div class="msg"></div>
         <div>
-          <label for="email">Email:</label>
-          <input type="email" id="email" required>
+          <label for="password"></label>
+          <input type="password" id="npass" placeholder="password" required>
         </div>
         
-        <input class="btn" type="submit" value="Submit" onclick="passwordResetLink(event)">
+        <div>
+            <label for="confirm_password"></label>
+            <input type="password" id="cpass" placeholder="confirm password" required>
+          </div>
+        
+        <input class="btn" type="submit" value="Submit" onclick="updatePassword(event)">
       </form>
     </section>
 
