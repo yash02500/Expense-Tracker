@@ -9,10 +9,10 @@ const Expenses= sequelize.define('Expenses',{
         allowNull: false,
         primaryKey: true
     },
-    amount:{
-        type: Sequelize.INTEGER,
-        allownull: false
-    },
+    // amount:{
+    //     type: Sequelize.INTEGER,
+    //     allownull: false
+    // },
     description:{
         type: Sequelize.STRING,
         allownull: false
@@ -20,7 +20,18 @@ const Expenses= sequelize.define('Expenses',{
     category:{
         type: Sequelize.STRING,
         allownull: false,
+    },
+    // type:{
+    //     type: Sequelize.STRING,
+    //     allowNull: false
+    // }
+    income:{
+        type: Sequelize.INTEGER,
+    },
+    expense:{
+        type: Sequelize.INTEGER,
     }
+
 });
 
 Expenses.belongsTo(User);

@@ -45,7 +45,7 @@ const addUser = async (req, res, next) => {
 
 // Generating jwt token
 const generateToken = (id, isPremiumuser) =>{
-    return jwt.sign({userId: id, isPremiumuser}, '7yv3ydbn324320rdnewod39dn4urybfece');
+    return jwt.sign({userId: id, isPremiumuser}, process.env.JWT_TOKEN);
 };
 
 //User login
@@ -112,8 +112,8 @@ const sendResetLink = async (req, res, next) => {
             port: 465,
             secure: true, // Use `true` for port 465, `false` for all other ports
             auth: {
-                user: 'tech1organisation@gmail.com', // Use environment variables
-                pass: 'iial geqy qohs bqih',
+                user: process.env.EMAIL_SENDER , // Use environment variables
+                pass: process.env.SENDER_PASS,
             },
         });
 

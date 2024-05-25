@@ -28,6 +28,12 @@ async function login(event) {
 };
 
 
+// Logout
+function logOut() {
+    localStorage.removeItem('token');
+    window.location.href = "login.html"; 
+}
+
 
 //Forgot password
 async function passwordResetLink(event) {
@@ -66,7 +72,8 @@ async function getUUIDFromUrl() {
             // Consider using a dedicated error element instead of innerHTML
             console.error(error);
         }
-    } else {
+    } 
+    else {
         console.error('UUID is not valid or not present in the URL.');
     }
 }
@@ -100,3 +107,4 @@ async function updatePassword(event){
             console.error('Error occured in reseting password', error);
         }
 };
+

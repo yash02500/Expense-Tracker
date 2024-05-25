@@ -1,19 +1,21 @@
 const Expense = require('../models/expenses');
+const Sequelize = require('sequelize');
 
 //add expenses
-exports.addExpense = async (req, res, next) => {
-    const {amount, description, category} = req.body;
+const addExpense = async (req, res, next) => {
+    const {description, category, income, expense} = req.body;
     console.log("Expense add request received", req.body);
-    if(!amount || !description || !category){
+    if(!description || !category ){
         console.log('Expense data missing');
         return res.sendStatus(400);
     }
 
     try{
         const newExpense = await Expense.create({
-            amount: amount,
             description: description,
             category: category,
+            income: income,
+            expense: expense,
             UserId: req.user.id
         });
         
@@ -28,10 +30,17 @@ exports.addExpense = async (req, res, next) => {
 
 
 // Getting expenses from database
-exports.getExpense = async (req, res) => {
+const getExpense = async (req, res) => {
     try {
-        const expenses= await Expense.findAll({where: {UserId: req.user.id}});
-         return res.status(200).json({expenses: expenses});
+        const expenses= await Expense.findAll({
+        where: {UserId: req.user.id},
+        attributes: [
+            'id', 'description', 'category', 'income', 'expense',
+            [Sequelize.fn('date', Sequelize.col('createdAt')), 'dateOnly'] // Extracts only the date part
+          ]
+    });
+
+    return res.status(200).json({expenses: expenses});
     }catch(error){
         console.log(error);
         res.status(500).json({error: error});
@@ -40,7 +49,7 @@ exports.getExpense = async (req, res) => {
 
 
 // Deleting expense
-exports.deleteExpenses = async (req, res, next) => {
+const deleteExpenses = async (req, res, next) => {
     try {
         const id = req.params.id;
         await Expense.destroy({where: {id: id, UserId: req.user.id}})
@@ -55,3 +64,9 @@ exports.deleteExpenses = async (req, res, next) => {
     }
 }
 
+
+module.exports = {
+    addExpense,
+    getExpense,
+    deleteExpenses
+}

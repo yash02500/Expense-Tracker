@@ -20,11 +20,15 @@ expForm.addEventListener('submit', async function(event) {
     const amount= document.getElementById('amt').value;
     const description= document.getElementById('dec').value;
     const category= document.getElementById('choose').value;
+    const typeIsExp= document.getElementById('expense').checked;
+    const typeIsInc= document.getElementById('income').checked;
 
     const expenseData={
-        amount: amount,
         description: description,
         category: category,
+        income: typeIsInc ? amount : 0,
+        expense: typeIsExp ? amount : 0,
+
     };
 
     try{
@@ -37,7 +41,8 @@ expForm.addEventListener('submit', async function(event) {
     document.getElementById('amt').value = '';
     document.getElementById('dec').value = '';
     document.getElementById('choose').value = '';
-
+    document.getElementById('expense').checked ='';
+    document.getElementById('income').checked ='';
   })
 });
 
@@ -76,9 +81,11 @@ function showData(){
                 const newExp= document.createElement('tr');
                 newExp.dataset.id= exp.id;
                 newExp.innerHTML=`
-                    <td>${exp.amount}</td>
+                    <td>${exp.dateOnly}</td>    
                     <td>${exp.description}</td>
                     <td>${exp.category}</td>
+                    <td>${exp.income}</td>
+                    <td>${exp.expense}</td>
                     <td><button class="btn btn-danger delete-btn">Delete</button></td>`;
                     tableBody.appendChild(newExp);
             });
@@ -95,7 +102,28 @@ function showData(){
 // premium membership message
 function premiumUser(){
     document.getElementById('premium').style.display = 'none';
-    document.getElementById('message').innerHTML = 'Congratulations! You are now a premium member';
+    document.getElementById('message').innerHTML = `<strong><P>Congratulations! You are now a premium member</p></strong>`;
+}
+
+
+// Download reports
+async function downloadReports(){
+    try {
+        const res = await axios.get('http://localhost:3000/premiumFeature/downloadReport', {headers: {'Authorization': token }});
+        if(res.status === 200){
+            var a = document.createElement('a');
+            a.href = res.data.fileURL;
+            a.download = 'myexpense.csv';
+            a.click();   
+        }
+        else{
+            alert('File not found');
+        }
+
+    } catch (error) {
+        alert("File not found");
+        console.error(error);
+    }
 }
 
 

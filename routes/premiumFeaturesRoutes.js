@@ -4,5 +4,6 @@ const premiumFeatureController = require('../controllers/premiumFeature');
 const routes = express.Router();
 
 routes.get('/leaderboard', userAuthentication.authenticate, premiumFeatureController.leaderboard);
+routes.get('/downloadReport', userAuthentication.authenticate, premiumFeatureController.downloadReports);
 
 module.exports = routes;

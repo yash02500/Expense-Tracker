@@ -7,8 +7,71 @@
   <title>Add Expenses</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+
+<style>
+  .radio{
+    margin-right: 16%;
+  }
+
+  /* Responsive table */
+  .table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Responsive typography */
+  @media (max-width: 768px) {
+    h2 {
+      font-size: 1.5rem; /* Smaller font size on tablets and below */
+    }
+  }
+
+  @media (max-width: 576px) {
+    .radio {
+      margin-right: 10px; /* Less margin on phones */
+    }
+
+    .form-group label {
+      font-size: 0.9rem; /* Smaller labels on phones */
+    }
+  }
+
+</style>
+
 </head>
 <body>
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <strong><a class="navbar-brand" href="#">ExpenseTracker</a></strong>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav" id ="navbar">
+        <li class="nav-item active">
+          <strong><a class="nav-link" href="#" style="color: rgb(53, 154, 218);">Home <span class="sr-only">(current)</span></a></strong>
+        </li>
+
+        <li class="nav-item">
+          <strong><a class="nav-link" href="#">Buy Premium</a></strong>
+        </li>
+
+        <li class="nav-item">
+          <strong><a class="nav-link" href="#" id="download" onclick="downloadReports(event)">Download report</a></strong>
+        </li>
+      </ul>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="btn btn-outline-danger" onclick="logOut()">Logout</a>
+        </li>
+      </ul>
+
+    </div>
+  </nav>
+  
+
   <div class="container mt-5">
    <div class="row justify-content-center">
     <div class="col-md-6">
@@ -16,11 +79,18 @@
       <div id="message"></div>
      <form id="expForm" class="p-4 bg-light rounded">
      
-      <h2 class="mb-4">Add Expenses</h2>
+      <h2 class="mb-4">Add Transactions</h2>
 
       <div class="form-group">
-        <label for="toggle-type">Transaction Type:</label><br>
-        <input type="checkbox" id="toggle-type" data-toggle="toggle" data-on="Expense" data-off="Income" data-onstyle="danger" data-offstyle="success">
+        <strong><label>Transaction Type:</label></strong><br>
+        <div>
+          <input type="radio" id="expense" name="transactionType" value="Expense" required>
+          <strong><label for="expense" style="color: rgb(232, 12, 56);" class="radio">EXPENSE</label></strong>
+        
+          <input type="radio" id="income" name="transactionType" value="Income" required>
+          <strong><label for="income" style="color: rgb(13, 170, 26);" class="radio">INCOME</label></strong>
+        </div>
+    
       </div>
 
        <div class="form-group">
@@ -40,23 +110,27 @@
         <option value="Electricity" class="categ">Electricity</option>
         <option value="Fuel" class="categ">Fuel</option>
         <option value="Food" class="categ">Food</option>
+        <option value="Food" class="categ">Salary</option>
+        <option value="Food" class="categ">Investments</option>
       </select>
     </div>
 
-    <button type="submit" class="btn btn-dark">Add Expense</button>
+    <button type="submit" class="btn btn-dark">Add</button>
   </form>
 </div>
   
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-7">
-      <h2 class="mb-4">Your Expenses</h2>
+      <h2 class="mb-4">Your Transactions</h2>
       <table class="table">
         <thead>
           <tr>
-            <th scope="col">Amount</th>
+            <th scope="col">Date</th>
             <th scope="col">Description</th>
             <th scope="col">Category</th>
+            <th scope="col">Income</th>
+            <th scope="col">Expense</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
@@ -76,10 +150,14 @@
 </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="/js/expenses.js"></script>
+<script src="/js/login.js"></script>
 </body>
 </html> 
 
