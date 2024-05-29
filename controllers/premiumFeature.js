@@ -39,7 +39,7 @@ const uploadToS3 = async (data, filename) => {
 
     const s3bucket = new AWS.S3({
         accessKeyId: IAM_USER_KEY,
-        secretAccessKey: IAM_USER_SECRE,
+        secretAccessKey: IAM_USER_SECRET,
         Bucket: BUCKET_NAME
     });
 
