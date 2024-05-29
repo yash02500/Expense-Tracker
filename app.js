@@ -14,6 +14,7 @@ const Expenses = require('./models/expenses');
 const User = require('./models/user');
 const Order = require('./models/orders');
 const ForgotPassword = require('./models/forgotPasswordRequest');
+ const DownloadList = require('./models/downloadList');
 
 dotenv.config();
 const app = express();
@@ -36,13 +37,16 @@ Order.belongsTo(User);
 User.hasMany(ForgotPassword);
 ForgotPassword.belongsTo(User);
 
+User.hasMany(DownloadList);
+DownloadList.belongsTo(User);
+
 sequelize.sync()
 .then(() => {
  app.listen(3000, () => {
   console.log('server is running');
    app.get('/', (req, res, next) => {
-    res.sendFile(path.join(__dirname, "public", "login.html"));
-   })
+        res.sendFile(path.join(__dirname, "public", "addExpense.html"));
+    })
   });
  })
 .catch((err) => console.log(err));

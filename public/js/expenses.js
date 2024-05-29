@@ -2,6 +2,11 @@
 const token =localStorage.getItem('token');
 document.addEventListener('DOMContentLoaded', function () {
 
+if(!token){
+    alert("You need to login!!")
+    window.location.href = "login.html";
+}
+
 showData();
 
 const decode= parseJwt(token);
@@ -10,7 +15,8 @@ const isPremiumuser =decode.isPremiumuser;
 
 if(isPremiumuser){
  premiumUser();
- showLeaderboard();  
+ showLeaderboard();
+ userBalance();
 }
 
 const expForm= document.getElementById('expForm');
@@ -102,7 +108,6 @@ function showData(){
 // premium membership message
 function premiumUser(){
     document.getElementById('premium').style.display = 'none';
-    document.getElementById('message').innerHTML = `<strong><P>Congratulations! You are now a premium member</p></strong>`;
 }
 
 
@@ -123,6 +128,52 @@ async function downloadReports(){
     } catch (error) {
         alert("File not found");
         console.error(error);
+    }
+}
+
+
+// Download List
+async function downloadList() {
+    const downList = document.getElementById('downloadList');
+    downList.innerHTML = ''; 
+    try {
+        const res = await axios.get('http://localhost:3000/premiumFeature/downloadList', { headers: { 'Authorization': token } });
+        console.log(res.data);
+        res.data.forEach(lists => {
+            const newList = document.createElement('li');
+            const link = document.createElement('a');
+            link.setAttribute('href', lists.fileUrl); // Set the href attribute to the file URL
+            link.setAttribute('download', ''); // Optional: if you want the file to be downloaded on click
+            link.textContent = lists.fileUrl; // Text to display for the download link
+            newList.appendChild(link); // Append the anchor to the list item
+            downList.appendChild(newList); // Append the list item to the list
+        });
+
+    } catch (err) {
+        console.error('List not found', err);
+        downList.innerHTML += '<h3>List Not Found</h3>';
+    }
+}
+
+
+// User balance
+async function userBalance(){
+    try{
+        const res = await axios.get('http://localhost:3000/premiumFeature/balance', { headers: { 'Authorization': token } });
+        const bal = document.getElementById('balance');
+        bal.style.visibility = 'visible';
+        let amount = res.data;
+
+        if(amount > 0){
+            bal.style.color = 'green'; // Set the color to green if the amount is positive
+        } else {
+            bal.style.color = 'red'; // Set the color to red if the amount is negative
+        }
+
+        bal.innerHTML = `Balance: ${'₹ '+amount}`;  
+
+    }catch(error){
+        console.log(error, 'error in fetching balance')
     }
 }
 

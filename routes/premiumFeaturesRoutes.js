@@ -5,5 +5,7 @@ const routes = express.Router();
 
 routes.get('/leaderboard', userAuthentication.authenticate, premiumFeatureController.leaderboard);
 routes.get('/downloadReport', userAuthentication.authenticate, premiumFeatureController.downloadReports);
+routes.get('/downloadList', userAuthentication.authenticate, premiumFeatureController.downloadList);
+routes.get('/balance', userAuthentication.authenticate, premiumFeatureController.userBalance);
 
 module.exports = routes;

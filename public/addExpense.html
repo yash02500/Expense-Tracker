@@ -21,6 +21,10 @@
     -webkit-overflow-scrolling: touch;
   }
 
+  #balance{
+    margin-top: 10%;
+  }
+
   /* Responsive typography */
   @media (max-width: 768px) {
     h2 {
@@ -60,6 +64,10 @@
 
         <li class="nav-item">
           <strong><a class="nav-link" href="#" id="download" onclick="downloadReports(event)">Download report</a></strong>
+        </li>
+
+        <li class="nav-item">
+          <strong><a class="nav-link" href="#" id="downloadList" onclick="downloadList()">List Of Downloads</a></strong>
         </li>
       </ul>
       <ul class="navbar-nav ml-auto">
@@ -115,7 +123,8 @@
       </select>
     </div>
 
-    <button type="submit" class="btn btn-dark">Add</button>
+    <center><button type="submit" class="btn btn-dark" style="width: 40%;">Add</button></center>
+    <strong><h3><label for="choose" id="balance" style="visibility: hidden;" >Balance:</label></h3></strong>
   </form>
 </div>
   

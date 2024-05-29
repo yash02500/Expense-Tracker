@@ -1,5 +1,6 @@
 const Expense = require('../models/expenses');
 const User = require('../models/user');
+const DownloadLists = require('../models/downloadList');
 const sequelize = require('../util/database');
 const AWS = require('aws-sdk');
 const dotenv = require('dotenv');
@@ -9,7 +10,7 @@ dotenv.config();
 const leaderboard = async (req, res) => {
     try{
         const leaderboardList = await User.findAll({
-            attributes: ['id', 'name',[sequelize.fn('sum', sequelize.col('expenses.amount')), 'total_cost'] ],
+            attributes: ['id', 'name',[sequelize.fn('sum', sequelize.col('expense')), 'total_cost'] ],
             include: [
                 {
                     model: Expense,
@@ -71,6 +72,12 @@ const downloadReports = async (req, res, next) => {
     const filename = `Expense${userId}/${new Date()}.txt`;
     const fileURL = await uploadToS3(stringifiedExpenses, filename);
     res.status(200).json({fileURL, success: true});
+
+    await DownloadLists.create({
+        fileUrl: fileURL,
+        UserId: userId
+    });
+    console.log('URL added to database');
     
     }catch(error){
         console.log(error);
@@ -79,7 +86,46 @@ const downloadReports = async (req, res, next) => {
 }
 
 
+//Download Lists
+const downloadList = async (req, res, next) => {
+    try {
+        const urlList = await DownloadLists.findAll({ where: {UserId: req.user.id}});
+        res.status(200).json(urlList)
+    }catch(error){
+        console.log(error);
+        res.status(500).json({error: error});
+    }
+}
+
+
+// User balance
+const userBalance = async (req, res, next) => {
+    try {
+        // Find all records for the user
+        const records = await Expense.findAll({ where: { UserId: req.user.id } });
+
+        // Sum up all income amounts
+        let totalIncome = records.reduce((sum, record) => sum + (record.income || 0), 0);
+        console.log('Total Income:', totalIncome);
+        
+        let totalExpense = records.reduce((sum, record) => sum + (record.expense || 0), 0);
+        console.log('Total Expense:', totalExpense);
+        
+        // Calculate the total balance
+        let total = totalIncome - totalExpense;
+        let balanceStr = `${total.toFixed(2)}`;
+        res.status(200).json(balanceStr);
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Server Error');
+    }
+}
+
+
 module.exports = {
     leaderboard,
-    downloadReports
+    downloadReports,
+    downloadList,
+    userBalance
 }
