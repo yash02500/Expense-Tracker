@@ -123,7 +123,6 @@ const userBalance = async (req, res, next) => {
 }
 
 
-
 module.exports = {
     leaderboard,
     downloadReports,
