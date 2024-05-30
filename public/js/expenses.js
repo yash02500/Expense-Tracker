@@ -40,6 +40,7 @@ expForm.addEventListener('submit', async function(event) {
     try{
         await axios.post('http://localhost:3000/expense/addingExpense', expenseData, {headers: {'Authorization': token }});
         showData();
+        userBalance();
     }catch(error){
         console.log(error);
     }
@@ -207,6 +208,7 @@ document.getElementById("expTable").addEventListener("click", function (event) {
       axios.delete(`http://localhost:3000/expense/deleteExpense/${expenseId}`, {headers: {'Authorization': token}})
           .then(() => {
               row.remove();
+              userBalance();
           })
           .catch(err => {
               console.error(err);
@@ -243,5 +245,5 @@ document.getElementById('premium').onclick = async function(e){
     console.log(response);
     alert('Payment failed');
   });
-
 }
+
