@@ -1,6 +1,8 @@
 const Razorpay = require('razorpay');
 const Order = require('../models/orders');
 const userController = require('./userController');
+const dotenv = require('dotenv');
+dotenv.config();
 
 // making order of premium member
 exports.buyPremium = async (req, res) => {

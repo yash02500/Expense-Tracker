@@ -2,6 +2,10 @@ const dotenv = require('dotenv');
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+// const helmet = require('helmet');
+const cors = require('cors');
+const morgan = require('morgan');
+const fs = require('fs');
 
 const expenseRoute = require('./routes/expenseRoutes');
 const userRoute = require('./routes/userRoutes');
@@ -27,6 +31,29 @@ app.use('/expense', expenseRoute);
 app.use('/user', userRoute);
 app.use('/premium', premiumRoute);
 app.use('/premiumFeature', premiumFeatures);
+
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags: 'a'});
+
+app.use(cors());
+// app.use(helmet());
+app.use(morgan('combined', {stream: accessLogStream}));
+// app.use(
+//   helmet.contentSecurityPolicy({
+//     directives: {
+//       defaultSrc: ["'self'"],
+//       scriptSrc: [
+//         "'self'",
+//         'https://code.jquery.com',
+//         'https://cdnjs.cloudflare.com',
+//         'https://stackpath.bootstrapcdn.com',
+//         'https://checkout.razorpay.com',
+//         'https://gitcdn.github.io',
+//         'https://cdn.jsdelivr.net',
+//       ],
+//       // Other directives can go here
+//     },
+//   })
+// )
 
 User.hasMany(Expenses);
 Expenses.belongsTo(User);
