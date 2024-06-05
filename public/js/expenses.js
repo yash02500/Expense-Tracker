@@ -107,8 +107,17 @@ function showData(){
 
 
 // premium membership message
-function premiumUser(){
+function premiumUser() {
     document.getElementById('premium').style.display = 'none';
+    document.getElementById('download').style.display = 'list-item';
+    document.getElementById('downloadList').style.display = 'list-item';
+
+    //const navBar = document.getElementById('navbar'); 
+    const logoutButton = document.querySelector('.navbar-nav.ml-auto'); 
+    const premiumUnlocked = document.createElement('strong');
+    premiumUnlocked.className = 'nav-link';
+    premiumUnlocked.textContent = 'Premium✅';
+    logoutButton.insertBefore(premiumUnlocked, logoutButton.firstChild);
 }
 
 
@@ -179,25 +188,92 @@ async function userBalance(){
 }
 
 
-// Leaderboard
-function showLeaderboard(){
-    const inputElement = document.createElement("input")
-    inputElement.type = "button"
-    inputElement.className = "btn btn-outline-success"
-    inputElement.value = 'Show Leaderboard'
-    inputElement.onclick = async() => {
-        const leaderboardData = await axios.get('http://localhost:3000/premiumFeature/leaderboard', { headers: {"Authorization" : token} })
-        console.log(leaderboardData)
+//Users expense leaderboard
+function showLeaderboard() {
+    // Create a modal element
+    const modal = document.createElement('div');
+    modal.style.display = 'none';
+    modal.style.position = 'fixed';
+    modal.style.zIndex = '1';
+    modal.style.left = '0';
+    modal.style.top = '0';
+    modal.style.width = '100%';
+    modal.style.height = '100%';
+    modal.style.overflow = 'auto';
+    modal.style.backgroundColor = 'rgba(0,0,0,0.4)'; // Black w/ opacity
 
-        let leaderboardList = document.getElementById('leaderboard')
-        leaderboardList.innerHTML += '<h2> Leaderboard </<h2>'
-        leaderboardData.data.forEach((userDetails) => {
-            leaderboardList.innerHTML += `<li class="list-group-item">Name - ${userDetails.name} Total Expense - ${userDetails.total_cost || 0} </li>`
-        })
-    }
-    document.getElementById("message").appendChild(inputElement);
+    // Modal content container
+    const modalContent = document.createElement('div');
+    modalContent.style.backgroundColor = '#fefefe';
+    modalContent.style.margin = '15% auto';
+    modalContent.style.padding = '20px';
+    modalContent.style.border = '1px solid #888';
+    modalContent.style.width = '80%';
 
+    // Close button for the modal
+    const closeButton = document.createElement('button');
+    closeButton.innerHTML = '×';
+    closeButton.style.color = 'red';
+    closeButton.style.float = 'right';
+    closeButton.style.fontSize = '28px';
+    closeButton.style.fontWeight = 'bold';
+    closeButton.style.border = 'none';
+    closeButton.style.background = 'none';
+    closeButton.onclick = function() {
+        modal.style.display = 'none';
+    };
+
+    // Append close button to modal content
+    modalContent.appendChild(closeButton);
+
+    // Leaderboard title
+    const title = document.createElement('h2');
+    title.innerText = 'Leaderboard';
+    modalContent.appendChild(title);
+
+    // Leaderboard list container
+    const leaderboardList = document.createElement('ul');
+    leaderboardList.id = 'leaderboard';
+    leaderboardList.className = 'list-group';
+    modalContent.appendChild(leaderboardList);
+
+    // Append modal content to modal
+    modal.appendChild(modalContent);
+
+    // Append modal to document body
+    document.body.appendChild(modal);
+
+    // Button to show the leaderboard
+    const inputElement = document.createElement("input");
+    inputElement.type = "button";
+    inputElement.className = "nav-link";
+    inputElement.value = 'Leaderboard📶';
+    inputElement.style.fontWeight = 'bold'; 
+    inputElement.style.border = 'none';
+    inputElement.style.background = 'none';
+    inputElement.onclick = async () => {
+        modal.style.display = 'block'; // Show the modal
+
+        // Fetch leaderboard data
+        const response = await axios.get('http://localhost:3000/premiumFeature/leaderboard', { headers: {"Authorization" : token} });
+        const leaderboardData = response.data;
+
+        // Clear previous leaderboard entries
+        leaderboardList.innerHTML = '';
+
+        // Add new leaderboard entries
+        leaderboardData.forEach(userDetails => {
+            const listItem = document.createElement('li');
+            listItem.className = 'list-group-item';
+            listItem.innerText = `Name - ${userDetails.name} Total Expense - ${userDetails.total_cost || 0}`;
+            leaderboardList.appendChild(listItem);
+        });
+    };
+
+    // Append button to navbar
+    document.getElementById("navbar").appendChild(inputElement);
 }
+
 
 
 // Deleting expense
