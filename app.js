@@ -50,9 +50,11 @@ ForgotPassword.belongsTo(User);
 User.hasMany(DownloadList);
 DownloadList.belongsTo(User);
 
+const port = process.env.PORT;
+
 sequelize.sync()
 .then(() => {
- app.listen(3000, () => {
+ app.listen(port, () => {
   console.log('server is running');
    app.get('/', (req, res, next) => {
         res.sendFile(path.join(__dirname, "public", "addExpense.html"));
