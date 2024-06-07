@@ -265,7 +265,7 @@ function showLeaderboard() {
         leaderboardData.forEach(userDetails => {
             const listItem = document.createElement('li');
             listItem.className = 'list-group-item';
-            listItem.innerText = `Name - ${userDetails.name} Total Expense - ${userDetails.total_cost || 0}`;
+            listItem.innerText = `Name: ${userDetails.name} => Total Expense: ${userDetails.total_cost || 0}`;
             leaderboardList.appendChild(listItem);
         });
     };
