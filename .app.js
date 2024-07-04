@@ -2,7 +2,6 @@ const dotenv = require('dotenv');
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-//const helmet = require('helmet');
 const cors = require('cors');
 const morgan = require('morgan');
 const fs = require('fs');
@@ -35,7 +34,6 @@ app.use('/premiumFeature', premiumFeatures);
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags: 'a'});
 
 app.use(cors());
-//app.use(helmet());
 app.use(morgan('combined', {stream: accessLogStream}));
 
 User.hasMany(Expenses);
@@ -56,7 +54,7 @@ sequelize.sync()
 .then(() => {
  app.listen(port, () => {
   console.log('server is running');
-     app.get('/', (req, res, next) => {
+   app.get('/', (req, res, next) => {
         res.sendFile(path.join(__dirname, "public", "addExpense.html"));
     })
   });

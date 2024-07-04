@@ -1,4 +1,7 @@
-        
+
+import config from './config.js';
+
+
 async function addUser(event){
     try{
         event.preventDefault();
@@ -7,7 +10,7 @@ async function addUser(event){
         const userEmail = document.getElementById('uemail').value;
         const userPass = document.getElementById('upass').value;
 
-        await axios.post('http://localhost:3000/user/signup', {
+        await axios.post(`http://${config.IP}:${config.PORT}/user/signup`, {
             name: userName,
             email: userEmail,
             password: userPass

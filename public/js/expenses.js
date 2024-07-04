@@ -1,4 +1,6 @@
 
+import config from './config.js';
+
 const token =localStorage.getItem('token');
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -38,7 +40,7 @@ expForm.addEventListener('submit', async function(event) {
     };
 
     try{
-        await axios.post('http://localhost:3000/expense/addingExpense', expenseData, {headers: {'Authorization': token }});
+        await axios.post(`http://${config.IP}:${config.PORT}/expense/addingExpense`, expenseData, {headers: {'Authorization': token }});
         showData();
         userBalance();
     }catch(error){
@@ -56,7 +58,7 @@ expForm.addEventListener('submit', async function(event) {
 
 // Fetch expenses
 function getExpenses(){
-    return axios.get('http://localhost:3000/expense/getExpenses', {headers: {'Authorization': token }})
+    return axios.get(`http://${config.IP}:${config.PORT}/expense/getExpenses`, {headers: {'Authorization': token }})
     .then(response=>{
         return response.data.expenses;
     }).catch(error=>{
@@ -124,7 +126,7 @@ function premiumUser() {
 // Download reports
 async function downloadReports(){
     try {
-        const res = await axios.get('http://localhost:3000/premiumFeature/downloadReport', {headers: {'Authorization': token }});
+        const res = await axios.get(`http://${config.IP}:${config.PORT}/premiumFeature/downloadReport`, {headers: {'Authorization': token }});
         if(res.status === 200){
             var a = document.createElement('a');
             a.href = res.data.fileURL;
@@ -147,7 +149,7 @@ async function downloadList() {
     const downList = document.getElementById('downloadList');
     downList.innerHTML = ''; 
     try {
-        const res = await axios.get('http://localhost:3000/premiumFeature/downloadList', { headers: { 'Authorization': token } });
+        const res = await axios.get(`http://${config.IP}:${config.PORT}/premiumFeature/downloadList`, { headers: { 'Authorization': token } });
         console.log(res.data);
         res.data.forEach(lists => {
             const newList = document.createElement('li');
@@ -169,7 +171,7 @@ async function downloadList() {
 // User balance
 async function userBalance(){
     try{
-        const res = await axios.get('http://localhost:3000/premiumFeature/balance', { headers: { 'Authorization': token } });
+        const res = await axios.get(`http://${config.IP}:${config.PORT}/premiumFeature/balance`, { headers: { 'Authorization': token } });
         const bal = document.getElementById('balance');
         bal.style.visibility = 'visible';
         let amount = res.data;
@@ -255,7 +257,7 @@ function showLeaderboard() {
         modal.style.display = 'block'; // Show the modal
 
         // Fetch leaderboard data
-        const response = await axios.get('http://localhost:3000/premiumFeature/leaderboard', { headers: {"Authorization" : token} });
+        const response = await axios.get(`http://${config.IP}:${config.PORT}/premiumFeature/leaderboard`, { headers: {"Authorization" : token} });
         const leaderboardData = response.data;
 
         // Clear previous leaderboard entries
@@ -281,7 +283,7 @@ document.getElementById("expTable").addEventListener("click", function (event) {
   if (event.target.classList.contains("delete-btn")) {
       const row = event.target.closest("tr");
       const expenseId = row.dataset.id; 
-      axios.delete(`http://localhost:3000/expense/deleteExpense/${expenseId}`, {headers: {'Authorization': token}})
+      axios.delete(`http://${config.IP}:${config.PORT}/expense/deleteExpense/${expenseId}`, {headers: {'Authorization': token}})
           .then(() => {
               row.remove();
               userBalance();
@@ -295,22 +297,22 @@ document.getElementById("expTable").addEventListener("click", function (event) {
 
 // Razorpay 
 document.getElementById('premium').onclick = async function(e){
-    const response = await axios.get('http://localhost:3000/premium/premiumMembership', {headers: {'Authorization': token }});
+    const response = await axios.get(`http://${config.IP}:${config.PORT}/premium/premiumMembership`, {headers: {'Authorization': token }});
     console.log(response);
 
     var options = {
         "key": response.data.key_id,
         "order_id": response.data.order.id,
         "handler": async function(response){
-            await axios.post('http://localhost:3000/premium/updateTransactionStatus', {
+            await axios.post(`http://${config.IP}:${config.PORT}/premium/updateTransactionStatus`, {
             order_id: options.order_id,
             payment_id: response.razorpay_payment_id,
         }, {headers: {'Authorization': token }});
 
         alert('You are now a premium member');
         premiumUser();
-        localStorage.setItem('token', res.data.token)
-    },
+        localStorage.setItem('token', response.data.token)
+	},
   };
 
   const rzp1 = new Razorpay(options);
@@ -322,5 +324,3 @@ document.getElementById('premium').onclick = async function(e){
     alert('Payment failed');
   });
 }
-
-

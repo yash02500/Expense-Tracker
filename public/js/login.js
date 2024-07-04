@@ -1,12 +1,14 @@
+import config from './config.js';
 
 // User login
+
 async function login(event) {
     event.preventDefault();
     const userEmail = document.getElementById('lemail').value;
     const userPass = document.getElementById('lpass').value;
 
     try {
-        const response = await axios.post('http://localhost:3000/user/login', {
+        const response = await axios.post(`http://${config.IP}:${config.PORT}/user/login`, {
             email: userEmail,
             password: userPass
         });
@@ -41,7 +43,7 @@ async function passwordResetLink(event) {
     const Email = document.getElementById('email').value;
 
     try {
-        const response = await axios.post('http://localhost:3000/user/password/sendResetLink', {
+        const response = await axios.post(`http://${config.IP}:${config.PORT}/user/password/sendResetLink`, {
             email: Email
         });
 
@@ -66,7 +68,7 @@ async function getUUIDFromUrl() {
         localStorage.setItem('uuid', uuid);
 
         try {
-            const res = await axios.get(`http://localhost:3000/user/password/forgotpassword/${uuid}`);
+            const res = await axios.get(`http://${config.IP}:${config.PORT}/user/password/forgotpassword/${uuid}`);
             console.log(res.data.message);
         } catch (error) {
             // Consider using a dedicated error element instead of innerHTML
@@ -91,14 +93,14 @@ async function updatePassword(event){
         const uuid = localStorage.getItem('uuid');
         
         if(newPass===confirmPass){
-                await axios.post(`http://localhost:3000/user/password/forgotpassword/update/${uuid}`,{
+                await axios.post(`http://${config.IP}:${config.PORT}/user/password/forgotpassword/update/${uuid}`,{
                 password: newPass
             });    
             console.log('Passwords submit');
 
                 alert('Password updated successfully');
                 window.location.href = "/login.html";
-3           }
+           }
            else{
             alert('Passwords do not match');
            }

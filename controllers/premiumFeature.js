@@ -17,7 +17,7 @@ const leaderboard = async (req, res) => {
                     attributes: []
                 }
             ],
-            group:['user.id'],
+            group:['User.id'],
             order:[['total_cost', 'DESC']]
 
         })
@@ -61,7 +61,7 @@ const uploadToS3 = async (data, filename) => {
 };
 
 
-// Downloading repots 
+// Downloading reports 
 const downloadReports = async (req, res, next) => {
     try{
     const expenses = await req.user.getExpenses();
